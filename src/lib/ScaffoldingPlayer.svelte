@@ -121,7 +121,7 @@
 		vm.isPaused = () => paused;
 	};
 
-	onMount(() => {
+	const createScaffolding = () => {
 		scaffolding = new window.Scaffolding.Scaffolding();
 		scaffolding.width = 480;
 		scaffolding.height = 360;
@@ -131,9 +131,24 @@
 		scaffolding.vm.setRuntimeOptions({ fencing: false, miscLimits: false, maxClones: Infinity });
 		scaffolding.vm.setFramerate(60);
 		scaffolding.renderer.setUseHighQualityRender(true);
-		scaffolding.renderer?.resize(480, 360);
-		scaffolding.vm?.runtime?.renderer?.resize?.(480, 360);
+		scaffolding.renderer.resize(480, 360);
+
+		scaffolding.vm.extensionManager.securityManager.rewriteExtensionURL = (extensionURL) => {
+			let url = extensionURL;
+			switch (extensionURL) {
+				case "https://extensions.turbowarp.org/SharkPool/Camera.js":
+					url = "extensions/Camera.js"
+			}
+
+			return Promise.resolve(url);
+
+    	}
+
 		installPauseAddon(scaffolding);
+	}
+
+	onMount(() => {
+		createScaffolding();
 		onReady?.();
 	});
 
@@ -169,8 +184,9 @@
 		preloadedBuffer = null;
 
 		if (!buf) return;
-
+		
 		scaffolding.stopAll();
+		scaffolding.vm.quit();
 		await scaffolding.loadProject(buf);
 	};
 
