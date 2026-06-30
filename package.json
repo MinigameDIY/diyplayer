@@ -21,6 +21,6 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
-		"@turbowarp/scaffolding": "0.4.0"
+		"fastestsmallesttextencoderdecoder": "^1.0.22"
 	}
 }

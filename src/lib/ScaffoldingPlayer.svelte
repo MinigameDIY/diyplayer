@@ -1,7 +1,6 @@
 <script>
 	// @ts-nocheck
 	import { onMount, onDestroy } from "svelte";
-	import * as Scaffolding from "@turbowarp/scaffolding";
 	import TransitionScreen from "$lib/TransitionScreen.svelte";
 
 	let { onReady } = $props();
@@ -125,7 +124,7 @@
 	};
 
 	onMount(() => {
-		scaffolding = new Scaffolding.Scaffolding();
+		scaffolding = new window.Scaffolding.Scaffolding();
 		scaffolding.width = 480;
 		scaffolding.height = 360;
 		scaffolding.resizeMode = "preserve-ratio";
@@ -153,8 +152,9 @@
 	export const getGameState = () => {
 		let stateVar = safeGetVariable("gameState", "neutral");
 		if (stateVar === "neutral") {
-			stateVar = safeGetVariable("defaultGameState", "lose");
+			stateVar = scaffolding.vm?.runtime?.minigameData?.defaultGameState ?? "lose";
 		}
+		console.log(scaffolding.vm?.runtime?.minigameData);
 		return stateVar;
 	};
 
