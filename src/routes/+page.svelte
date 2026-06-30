@@ -2,11 +2,13 @@
 	// @ts-nocheck
 	import { onMount } from "svelte";
 	import ScaffoldingPlayer from "$lib/ScaffoldingPlayer.svelte";
+	import TransitionScreen from "$lib/TransitionScreen.svelte";
 	import { projects, pickRandom } from "$lib/projects";
 
 	const ROUND_DURATION = 8;
 
-	let player;
+	let player = $state("");
+	let transition = $state("");
 	let timeLeft = $state(ROUND_DURATION);
 	let currentProject = $state("");
 	let nextProject = $state("");
@@ -24,7 +26,9 @@
 		const first = pickRandom();
 		currentProject = first;
 		const buf = await fetchProject(first);
-		await player.loadAndStart(buf);
+
+		endRound(true);
+
 		schedulePreload();
 		startTimer();
 	};
@@ -32,7 +36,9 @@
 	const schedulePreload = async () => {
 		preloadReady = false;
 		nextProject = pickRandom(currentProject);
+
 		const buf = await fetchProject(nextProject);
+
 		player.preload(buf);
 		preloadReady = true;
 	};
@@ -58,18 +64,32 @@
 		animationFrameId = requestAnimationFrame(updateTimer);
 	};
 
-	const endRound = () => {
+	const endRound = (isStart = false) => {
 		cancelAnimationFrame(animationFrameId);
 		const result = player.getGameState();
 		const score = 999;
 
-		const runTransition = () => {
-			player.showTransition(result, score, () => {
-				currentProject = nextProject;
-				player.swap();
-				startTimer();
-				schedulePreload();
+		const runTransition = async () => {
+			player.pause();
+			
+			if (!isStart) {
+				await transition.showResult(result, score);
+			} else {
+				await transition.showStart();
+			}
+
+			currentProject = nextProject;
+
+			player.loadProject().then(() => {
+				transition.setInstruction(player.getInstruction());
 			});
+
+			await transition.showNext();
+
+			player.start();
+
+			startTimer();
+			schedulePreload();
 		};
 
 		if (!preloadReady) {
@@ -97,5 +117,16 @@
 	<div class="hud">
 		<span>⏱ {timeLeft.toFixed(1)}s</span>
 	</div>
-	<ScaffoldingPlayer bind:this={player} {onReady} />
+	<div class="stage-wrapper">
+		<ScaffoldingPlayer bind:this={player} {onReady} />
+		<TransitionScreen bind:this={transition} />
+	</div>
 {/if}
+
+<style>
+	.stage-wrapper {
+		position: relative;
+		width: 480px;
+		height: 360px;
+	}
+</style>

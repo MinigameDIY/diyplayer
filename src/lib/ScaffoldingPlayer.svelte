@@ -1,11 +1,9 @@
 <script>
 	// @ts-nocheck
 	import { onMount, onDestroy } from "svelte";
-	import TransitionScreen from "$lib/TransitionScreen.svelte";
 
 	let { onReady } = $props();
 	let container;
-	let transitionState = $state(null); // { result: 'win'|'lose', score: number|null } | null
 	let scaffolding = null;
 	let preloadedBuffer = null;
 
@@ -154,67 +152,47 @@
 		if (stateVar === "neutral") {
 			stateVar = scaffolding.vm?.runtime?.minigameData?.defaultGameState ?? "lose";
 		}
-		console.log(scaffolding.vm?.runtime?.minigameData);
+
 		return stateVar;
+	};
+
+	export const getInstruction = () => {
+		return scaffolding.vm?.runtime?.minigameData?.instruction ?? "Instruction failed to load :(";
 	};
 
 	export const preload = (buffer) => {
 		preloadedBuffer = buffer;
 	};
-	
-	export const showTransition = (result, score, onDone) => {
-		scaffolding.vm?.setPaused?.(true);
-		transitionState = { result, score };
 
-		const holdTimer = new Promise(resolve => setTimeout(resolve, 3*1000));
+	export const loadProject = async (buffer) => {
+		const buf = buffer ?? preloadedBuffer;
+		preloadedBuffer = null;
 
-		const loadProject = async () => {
-			// small delay so the entry animation has a frame to actually show
-			await new Promise(resolve => setTimeout(resolve, 100));
-			if (preloadedBuffer) {
-				scaffolding.stopAll();
-				await scaffolding.loadProject(preloadedBuffer);
-				preloadedBuffer = null;
-			}
-		};
+		if (!buf) return;
 
-		Promise.all([holdTimer, loadProject()]).then(() => {
-			transitionState = null;
-			setTimeout(onDone, 200);
-		});
+		scaffolding.stopAll();
+		await scaffolding.loadProject(buf);
 	};
 
-	export const swap = () => {
-		scaffolding.greenFlag();
-	};
-
-	// only runs at start
-	export const loadAndStart = async (buffer) => {
-		await scaffolding.loadProject(buffer);
-		scaffolding.greenFlag();
-	};
+	export const start = () => scaffolding.greenFlag();
+	export const stopAll = () => scaffolding?.stopAll?.();
 
 	export const pause = () => scaffolding?.vm?.setPaused?.(true);
 	export const resume = () => scaffolding?.vm?.setPaused?.(false);
+	
 	export const togglePause = () => {
 		const vm = scaffolding?.vm;
 		if (!vm) return;
 		vm.isPaused() ? vm.setPaused(false) : vm.setPaused(true);
 	};
+
 	export const isPaused = () => scaffolding?.vm?.isPaused?.() ?? false;
+
 </script>
 
-<div class="stage-wrapper">
-	<div bind:this={container} class="slot"></div>
-	<TransitionScreen result={transitionState?.result ?? null} score={transitionState?.score ?? null} />
-</div>
+<div bind:this={container} class="slot"></div>
 
 <style>
-	.stage-wrapper {
-		position: relative;
-		width: 480px;
-		height: 360px;
-	}
 	.slot {
 		width: 480px;
 		height: 360px;
