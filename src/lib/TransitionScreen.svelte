@@ -136,7 +136,10 @@
 	{/if}
 
 	{#if showInstruction}
-		<span class="instruction-text" in:fly={{ y: -200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }} out:fly={{ y: 200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }}>
+		<span class="instruction-text" 
+			in:fly={{ y: -200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }}
+			out:fly={{ y: 200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }}
+		>
 			{instruction}
 		</span>
 	{/if}

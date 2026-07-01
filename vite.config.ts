@@ -40,5 +40,8 @@ export default defineConfig({
 	],
 	build: {
 		sourcemap: false
+	},
+	server: {
+		allowedHosts: ['gratuity-saved-sedate.ngrok-free.dev']
 	}
 });

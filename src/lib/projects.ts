@@ -2,6 +2,7 @@ export const projects = [
   '/projects/flap.sb3',
   '/projects/sweetboy.sb3',
   '/projects/honse.sb3',
+  '/projects/poke.sb3',
 ];
 
 export const pickRandom = (exclude?: string) => {
