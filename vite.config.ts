@@ -13,27 +13,27 @@ function copyScaffoldingPlugin() {
 		name: 'copy-scaffolding',
 		buildStart() {
 			const scaffoldingDir = path.resolve(__dirname, 'node_modules/@turbowarp/scaffolding');
-			const skipInstall = process.env.SKIP_SCAFFOLDING_INSTALL === 'true';
-			const skipBuild = process.env.SKIP_SCAFFOLDING_BUILD === 'true';
+			const doInstall = process.env.INSTALL_SCAFFOLDING_DEPS === 'true';
+			const doBuild = process.env.BUILD_SCAFFOLDING === 'true';
 
-			if (!skipInstall) {
+			if (doInstall) {
 				console.log('[copy-scaffolding] installing scaffolding dependencies...');
 				execSync('npm install', {
 					cwd: scaffoldingDir,
 					stdio: 'inherit'
 				});
 			} else {
-				console.log('[copy-scaffolding] skipping dependency install (SKIP_SCAFFOLDING_INSTALL=true)');
+				console.log('[copy-scaffolding] skipping dependency install (INSTALL_SCAFFOLDING_DEPS=false)');
 			}
 
-			if (!skipBuild) {
+			if (doBuild) {
 				console.log('[copy-scaffolding] building scaffolding...');
 				execSync('npm run build', {
 					cwd: scaffoldingDir,
 					stdio: 'inherit'
 				});
 			} else {
-				console.log('[copy-scaffolding] skipping scaffolding building (SKIP_SCAFFOLDING_BUILD=true)');
+				console.log('[copy-scaffolding] skipping scaffolding building (BUILD_SCAFFOLDING=false)');
 			}
 
 			const src = path.join(scaffoldingDir, 'dist/scaffolding-min.js');
