@@ -159,6 +159,15 @@
 
 	onDestroy(() => scaffolding?.destroy?.());
 
+	// use conductor to get it
+	export const setSpeed = (value) => {
+		scaffolding.vm.runtime.timeScale = value;
+	}
+
+	export const getMinigameLength = () => {
+		return scaffolding.vm?.runtime?.minigameData?.length ?? 8.0;
+	}
+
 	export const getGameState = () => {
 		let stateVar = scaffolding.vm?.runtime?.gameState ?? "neutral";
 		if (stateVar === "neutral") {

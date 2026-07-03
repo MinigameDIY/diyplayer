@@ -1,6 +1,6 @@
 <script>
 	// @ts-nocheck
-	let { score, lives } = $props();
+	let { score, lives, conductor } = $props();
 	import { onMount, onDestroy } from "svelte";
 	import { fly } from 'svelte/transition';
 
@@ -25,10 +25,6 @@
 		speed: `${AUDIO_BASE}/transition_speed.ogg`,
 	};
 
-	const BPM = 120;
-	const SEC_PER_BEAT = 60 / BPM;
-	const beats = (n) => n * SEC_PER_BEAT * 1000;
-
 	const START_HOLD_BEATS = 4;
 	const NEXT_HOLD_BEATS = 4;
 	const RESULT_HOLD_BEATS = 4;
@@ -38,7 +34,7 @@
 	let audio = {};
 
 	const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-	const holdBeats = (n) => wait(beats(n));
+	const holdBeats = (n) => wait(conductor.secToBeats(n));
 
 	function playSound(name) {
 		const el = audio[name];
@@ -119,8 +115,8 @@
 
 	{#if showInstruction}
 		<span class="instruction-text" 
-			in:fly={{ y: -200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }}
-			out:fly={{ y: 200, duration: beats(INSTRUCTION_HOLD_BEATS) * 0.1 }}
+			in:fly={{ y: -200, duration: conductor.secToBeats(INSTRUCTION_HOLD_BEATS * 0.1) }}
+			out:fly={{ y: 200, duration: conductor.secToBeats(INSTRUCTION_HOLD_BEATS * 0.1) }}
 		>
 			{instruction}
 		</span>

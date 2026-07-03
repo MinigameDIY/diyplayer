@@ -5,10 +5,11 @@
 	import TransitionScreen from "$lib/TransitionScreen.svelte";
 	import EndScreen from "$lib/EndScreen.svelte";
 	import { projects, pickRandom } from "$lib/projects";
-
-	const ROUND_DURATION = 8;
+	import { Conductor } from "$lib/Conductor.svelte"
 
 	const DEFAULT_LIVES = 4;
+
+	const conductor = new Conductor(120);
 
 	let started = $state(false);
 	let gameOver = $state(false);
@@ -16,8 +17,6 @@
 	let player = $state("");
 	let transition = $state("");
 	let endScreen = $state("");
-
-	let timeLeft = $state(ROUND_DURATION);
 
 	let currentProject = $state("");
 	let nextProject = $state("");
@@ -34,14 +33,22 @@
 		return res.arrayBuffer();
 	};
 
-	const onReady = async () => {
+	const playerOnReady = async () => {
+		
+		conductor.minigameTimeoutCallback = minigameTimeout;
+		
+		conductor.start();
+		
 		currentProject = pickRandom();
 		const buf = await fetchProject(currentProject);
-
+		
 		endRound(true);
-
+		
 		schedulePreload();
-		startTimer();
+
+		conductor.player = player;
+		console.log(player);
+		console.log(conductor.player);
 	};
 
 	const schedulePreload = async () => {
@@ -54,33 +61,16 @@
 		preloadReady = true;
 	};
 
-	const updateTimer = () => {
-		const now = performance.now();
-		const deltaTime = (now - lastTime) / 1000;
-		lastTime = now;
-		timeLeft -= deltaTime;
-
-		if (timeLeft <= 0) {
-			timeLeft = 0;
-			endRound();
-		} else {
-			animationFrameId = requestAnimationFrame(updateTimer);
-		}
-	};
-
-	const minigameEnded = (state) => {
-		if (timeLeft > 4.0) {
-			const remainder = timeLeft - Math.round(timeLeft)
-			timeLeft = 4 + (1 - remainder)
-		}
+	const minigameTimeout = () => {
+		endRound();
 	}
 
-	const startTimer = () => {
-		timeLeft = ROUND_DURATION;
-		cancelAnimationFrame(animationFrameId);
-		lastTime = performance.now();
-		animationFrameId = requestAnimationFrame(updateTimer);
-	};
+	const minigameEnded = (state) => {
+		if (conductor.time_left > 4.0) {
+			const remainder = conductor.time_left - Math.round(conductor.time_left)
+			conductor.time_left = 4 + (1 - remainder)
+		}
+	}
 
 	const endRound = (isStart = false) => {
 		cancelAnimationFrame(animationFrameId);
@@ -92,12 +82,17 @@
 
 		const runTransition = async () => {
 			player.pause();
+
+			conductor.reset();
+			conductor.inMinigame = false;
 			
 			if (!isStart) {
 				await transition.showResult(result);
 			} else {
 				await transition.showStart();
 			}
+
+			conductor.reset();
 
 			if (lives <= 0) {
 				endGame();
@@ -111,8 +106,10 @@
 				await transition.showNext(score);
 
 				player.start();
-
-				startTimer();
+				conductor.reset();
+				conductor.inMinigame = true;
+				conductor.minigameLength = player.getMinigameLength();
+				
 				schedulePreload();
 			}
 		};
@@ -130,15 +127,20 @@
 	};
 
 	const endGame = () => {
+		conductor.reset();
 		player.quitProject();
+
 		gameOver = true;
 	}
 
 	const resetGame = () => {
+		conductor.stop();
 		gameOver = false;
 		started = false;
+
 		lives = DEFAULT_LIVES;
 		score = 0;
+
 		currentProject = "";
 		nextProject = "";
 	}
@@ -156,15 +158,15 @@
 {:else}
 	{#if !gameOver}
 		<div class="hud">
-			<span>⏱ {timeLeft.toFixed(1)}s</span>
+			<span>{conductor?.time_left?.toFixed(1) ?? '0.0'}s</span>
 		</div>
 	{/if}
 	<div class="stage-wrapper">
 		{#if gameOver}
 			<EndScreen bind:this={endScreen} score={score} onButtonPressed = {resetGame}></EndScreen>
 		{:else}
-			<ScaffoldingPlayer bind:this={player} onReady={onReady} onMinigameEnd={minigameEnded} />
-			<TransitionScreen bind:this={transition} score={score} lives={lives} />
+			<ScaffoldingPlayer bind:this={player} onReady={playerOnReady} onMinigameEnd={minigameEnded} />
+			<TransitionScreen bind:this={transition} conductor={conductor} score={score} lives={lives} />
 		{/if}
 	</div>
 {/if}
