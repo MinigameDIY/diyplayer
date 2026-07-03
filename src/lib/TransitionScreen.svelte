@@ -1,11 +1,10 @@
 <script>
 	// @ts-nocheck
+	let { score, lives } = $props();
 	import { onMount, onDestroy } from "svelte";
 	import { fly } from 'svelte/transition';
 
-	// phase: 'start' | 'next' | 'win' | 'lose' | null
 	let phase = $state(null);
-	let score = $state(null);
 
 	let instruction = $state("googoo");
 	let showInstruction = $state(false);
@@ -52,11 +51,8 @@
 		el.play().catch(() => {});
 	}
 
-	async function runPhase(nextPhase, soundName, holdBeatsCount, nextScore = null) {
+	async function runPhase(nextPhase, soundName, holdBeatsCount) {
 		phase = nextPhase;
-		score = nextScore;
-
-		console.log(phase);
 
 		if (soundName) playSound(soundName);
 
@@ -68,7 +64,6 @@
 			await holdBeats((INSTRUCTION_HOLD_BEATS / 2));
 
 			phase = null;
-			score = null;
 		} else {
 			await holdBeats(holdBeatsCount);
 		}
@@ -87,7 +82,7 @@
 	}
 
 	export const showStart = () => runPhase("start", "start", START_HOLD_BEATS);
-	export const showNext = (score = 0) => runPhase("next", "normal", NEXT_HOLD_BEATS, score)
+	export const showNext = () => runPhase("next", "normal", NEXT_HOLD_BEATS)
 	export const showResult = (result) => runPhase(result, result === "win" ? "win" : "lose", RESULT_HOLD_BEATS);
 
 	onMount(() => {
@@ -111,7 +106,10 @@
 			<span class="result-text">
 				{LABELS[phase] ?? ""}
 			</span>
-			{#if score !== null}
+			{#each [...Array(lives)] as _, index}
+				❤️
+			{/each}
+			{#if phase === "next"}
 				<span class="score-text">
 					scoar: {score}
 				</span>

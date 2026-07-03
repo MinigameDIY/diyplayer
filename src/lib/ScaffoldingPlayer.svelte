@@ -182,10 +182,14 @@
 
 		if (!buf) return;
 		
-		scaffolding.stopAll();
-		scaffolding.vm.quit();
+		quitProject();
 		await scaffolding.loadProject(buf);
 	};
+
+	export const quitProject = () => {
+		scaffolding.stopAll();
+		scaffolding.vm.quit();
+	}
 
 	export const start = () => scaffolding.greenFlag();
 	export const stopAll = () => scaffolding?.stopAll?.();

@@ -3,22 +3,31 @@
 	import { onMount } from "svelte";
 	import ScaffoldingPlayer from "$lib/ScaffoldingPlayer.svelte";
 	import TransitionScreen from "$lib/TransitionScreen.svelte";
+	import EndScreen from "$lib/EndScreen.svelte";
 	import { projects, pickRandom } from "$lib/projects";
 
 	const ROUND_DURATION = 8;
 
+	const DEFAULT_LIVES = 4;
+
 	let started = $state(false);
+	let gameOver = $state(false);
 
 	let player = $state("");
 	let transition = $state("");
+	let endScreen = $state("");
+
 	let timeLeft = $state(ROUND_DURATION);
+
 	let currentProject = $state("");
 	let nextProject = $state("");
+
 	let preloadReady = $state(false);
 	let animationFrameId;
 	let lastTime;
 
 	let score = $state(0);
+	let lives = $state(DEFAULT_LIVES);
 
 	const fetchProject = async (path) => {
 		const res = await fetch(path);
@@ -26,9 +35,8 @@
 	};
 
 	const onReady = async () => {
-		const first = pickRandom();
-		currentProject = first;
-		const buf = await fetchProject(first);
+		currentProject = pickRandom();
+		const buf = await fetchProject(currentProject);
 
 		endRound(true);
 
@@ -80,6 +88,8 @@
 
 		score++;
 
+		if (result === "lose" && isStart !== true) lives--;
+
 		const runTransition = async () => {
 			player.pause();
 			
@@ -89,18 +99,22 @@
 				await transition.showStart();
 			}
 
-			currentProject = nextProject;
+			if (lives <= 0) {
+				endGame();
+			} else {
+				currentProject = nextProject;
 
-			player.loadProject().then(() => {
-				transition.setInstruction(player.getInstruction());
-			});
+				player.loadProject().then(() => {
+					transition.setInstruction(player.getInstruction());
+				});
 
-			await transition.showNext(score);
+				await transition.showNext(score);
 
-			player.start();
+				player.start();
 
-			startTimer();
-			schedulePreload();
+				startTimer();
+				schedulePreload();
+			}
 		};
 
 		if (!preloadReady) {
@@ -115,6 +129,20 @@
 		}
 	};
 
+	const endGame = () => {
+		player.quitProject();
+		gameOver = true;
+	}
+
+	const resetGame = () => {
+		gameOver = false;
+		started = false;
+		lives = DEFAULT_LIVES;
+		score = 0;
+		currentProject = "";
+		nextProject = "";
+	}
+
 	onMount(() => {
 		return () => cancelAnimationFrame(animationFrameId);
 	});
@@ -124,13 +152,20 @@
 
 {#if !started}
 	<button onclick={() => started = true}>start oit</button>
+	
 {:else}
-	<div class="hud">
-		<span>⏱ {timeLeft.toFixed(1)}s</span>
-	</div>
+	{#if !gameOver}
+		<div class="hud">
+			<span>⏱ {timeLeft.toFixed(1)}s</span>
+		</div>
+	{/if}
 	<div class="stage-wrapper">
-		<ScaffoldingPlayer bind:this={player} onReady={onReady} onMinigameEnd={minigameEnded} />
-		<TransitionScreen bind:this={transition} />
+		{#if gameOver}
+			<EndScreen bind:this={endScreen} score={score} onButtonPressed = {resetGame}></EndScreen>
+		{:else}
+			<ScaffoldingPlayer bind:this={player} onReady={onReady} onMinigameEnd={minigameEnded} />
+			<TransitionScreen bind:this={transition} score={score} lives={lives} />
+		{/if}
 	</div>
 {/if}
 
