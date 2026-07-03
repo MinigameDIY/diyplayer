@@ -126,12 +126,9 @@
 		scaffolding.width = 480;
 		scaffolding.height = 360;
 		scaffolding.resizeMode = "preserve-ratio";
+		scaffolding.usePackagedRuntime = true;
 		scaffolding.setup();
 		scaffolding.appendTo(container);
-		scaffolding.vm.setRuntimeOptions({ fencing: false, miscLimits: false, maxClones: Infinity });
-		scaffolding.vm.setFramerate(60);
-		scaffolding.renderer.setUseHighQualityRender(true);
-		scaffolding.renderer.resize(480, 360);
 
 		scaffolding.vm.runtime.minigameEndedCallback = function(event) {
 			if (onMinigameEnd) {
