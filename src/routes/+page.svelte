@@ -57,6 +57,13 @@
 		}
 	};
 
+	const minigameEnded = (state) => {
+		if (timeLeft > 4.0) {
+			const remainder = timeLeft - Math.round(timeLeft)
+			timeLeft = 4 + (1 - remainder)
+		}
+	}
+
 	const startTimer = () => {
 		timeLeft = ROUND_DURATION;
 		cancelAnimationFrame(animationFrameId);
@@ -118,7 +125,7 @@
 		<span>⏱ {timeLeft.toFixed(1)}s</span>
 	</div>
 	<div class="stage-wrapper">
-		<ScaffoldingPlayer bind:this={player} {onReady} />
+		<ScaffoldingPlayer bind:this={player} onReady={onReady} onMinigameEnd={minigameEnded} />
 		<TransitionScreen bind:this={transition} />
 	</div>
 {/if}

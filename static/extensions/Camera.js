@@ -34,8 +34,6 @@
         precisionMode: false,
     };
 
-    console.log("its coming.");
-
     const ogLoadProject = vm.loadProject;
 
     vm.loadProject = function (data) {

@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount, onDestroy } from "svelte";
 
-	let { onReady } = $props();
+	let { onReady, onMinigameEnd } = $props();
 	let container;
 	let scaffolding = null;
 	let preloadedBuffer = null;
@@ -133,6 +133,12 @@
 		scaffolding.renderer.setUseHighQualityRender(true);
 		scaffolding.renderer.resize(480, 360);
 
+		scaffolding.vm.runtime.minigameEndedCallback = function(event) {
+			if (onMinigameEnd) {
+				onMinigameEnd(event);
+			}
+		}
+
 		scaffolding.vm.extensionManager.securityManager.rewriteExtensionURL = (extensionURL) => {
 			let url = extensionURL;
 			switch (extensionURL) {
@@ -141,7 +147,6 @@
 			}
 
 			return Promise.resolve(url);
-
     	}
 
 		installPauseAddon(scaffolding);
@@ -154,16 +159,8 @@
 
 	onDestroy(() => scaffolding?.destroy?.());
 
-	function safeGetVariable(name, fallback = null) {
-		try {
-			return scaffolding?.getVariable?.(name) ?? fallback;
-		} catch {
-			return fallback;
-		}
-	}
-
 	export const getGameState = () => {
-		let stateVar = safeGetVariable("gameState", "neutral");
+		let stateVar = scaffolding.vm?.runtime?.gameState ?? "neutral";
 		if (stateVar === "neutral") {
 			stateVar = scaffolding.vm?.runtime?.minigameData?.defaultGameState ?? "lose";
 		}
