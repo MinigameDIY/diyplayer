@@ -7,13 +7,14 @@
 
 	const ROUND_DURATION = 8;
 
+	let started = $state(false);
+
 	let player = $state("");
 	let transition = $state("");
 	let timeLeft = $state(ROUND_DURATION);
 	let currentProject = $state("");
 	let nextProject = $state("");
 	let preloadReady = $state(false);
-	let started = $state(false);
 	let animationFrameId;
 	let lastTime;
 
@@ -118,11 +119,11 @@
 		return () => cancelAnimationFrame(animationFrameId);
 	});
 
-	started = true;
+	
 </script>
 
 {#if !started}
-	<p>Loading...</p>
+	<button onclick={() => started = true}>start oit</button>
 {:else}
 	<div class="hud">
 		<span>⏱ {timeLeft.toFixed(1)}s</span>
