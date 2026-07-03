@@ -1,42 +1,32 @@
-# sv
+# How to compile
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Windows
+### First time setup:
+1. Install the following programs:
+    - The source code of the DIYPlayer (will be linked in the builds channel)
+    - [NodeJS](https://nodejs.org/dist/v24.18.0/node-v24.18.0-x64.msi)
+    - [git](https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.2/Git-2.55.0.2-64-bit.exe)
 
-## Creating a project
+2. Extract the source code of DIYPlayer and run `npm ci`
+    - If you get an error saying "Scripts are disabled on this system", run the following command in a powershell window: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
-If you're seeing this, you've probably already done this step. Congrats!
+3. Run either `set BUILD_SCAFFOLDING=true  && set INSTALL_SCAFFOLDING_DEPS=true && npm run dev` if you are using CMD, or `$env:BUILD_SCAFFOLDING="true"; $env:INSTALL_SCAFFOLDING_DEPS="true"; npm run dev` if you are using Powershell.
 
-```sh
-# create a new project
-npx sv create my-app
-```
+4. Navigate to http://localhost:5173/ in your browser.
 
-To recreate this project with the same configuration:
+### Subsequent runs
 
-```sh
-# recreate this project
-npx sv@0.16.1 create --template minimal --types ts --install npm diyplayer
-```
+1. Run `npm run dev`
 
-## Developing
+2. Navigate to http://localhost:5173/ in your browser.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Linux
+The setup is effectively the same, just use `BUILD_SCAFFOLDING=true INSTALL_SCAFFOLDING_DEPS=true  npm run dev` as the command instead (because unix is better lol)
 
-```sh
-npm run dev
+<br>
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+# How to add new Minigames
 
-## Building
+1. Place your project file inside `static/projects/`
 
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+2. Add your project name to the list inside `lib/projects.ts`
