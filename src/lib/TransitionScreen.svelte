@@ -14,6 +14,7 @@
 		next: "holdon im cooking",
 		win: "you ar winner",
 		lose: "you are losar",
+		speed: "Speedy uop"
 	};
 
 	const AUDIO_BASE = "/transition";
@@ -28,6 +29,7 @@
 	const START_HOLD_BEATS = 4;
 	const NEXT_HOLD_BEATS = 4;
 	const RESULT_HOLD_BEATS = 4;
+	const SPEED_HOLD_BEATS = 4;
 
 	const INSTRUCTION_HOLD_BEATS = 4;
 
@@ -36,13 +38,15 @@
 	const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 	const holdBeats = (n) => wait(conductor.secToBeats(n));
 
-	function playSound(name) {
+	function playSound(name, speed = 1.0) {
 		const el = audio[name];
 		if (!el) return;
 		
 		el.loop = false;
 		el.pause();
 		el.currentTime = 0;
+
+		el.playbackRate = speed;
 		
 		el.play().catch(() => {});
 	}
@@ -50,7 +54,7 @@
 	async function runPhase(nextPhase, soundName, holdBeatsCount) {
 		phase = nextPhase;
 
-		if (soundName) playSound(soundName);
+		if (soundName) playSound(soundName, conductor.speed);
 
 		if (nextPhase === "next") {
 			await holdBeats(holdBeatsCount - (INSTRUCTION_HOLD_BEATS / 2));
@@ -78,8 +82,9 @@
 	}
 
 	export const showStart = () => runPhase("start", "start", START_HOLD_BEATS);
-	export const showNext = () => runPhase("next", "normal", NEXT_HOLD_BEATS)
+	export const showNext = () => runPhase("next", "normal", NEXT_HOLD_BEATS);
 	export const showResult = (result) => runPhase(result, result === "win" ? "win" : "lose", RESULT_HOLD_BEATS);
+	export const showSpeed = () => runPhase("speed", "speed", SPEED_HOLD_BEATS)
 
 	onMount(() => {
 		for (const [name, src] of Object.entries(AUDIO_SRC)) {
@@ -179,6 +184,10 @@
 
 	.lose {
 		background: #ff3355;
+	}
+
+	.speed {
+		background: #33beff;
 	}
 
 	.result-text {

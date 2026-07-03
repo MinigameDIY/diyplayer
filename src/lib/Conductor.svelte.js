@@ -16,7 +16,7 @@ export class Conductor {
 	
 	minigameTimeoutCallback = null;
 	
-	secToBeats = (n) => n * this.secPerBeat * 1000 * this.speed;
+	secToBeats = (n) => n * ((this.secPerBeat * 1000) / this.speed);
 
 	secPerBeat = $derived(
 		60 / this.bpm

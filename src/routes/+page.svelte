@@ -9,7 +9,13 @@
 
 	const DEFAULT_LIVES = 4;
 
+	const DEFAULT_SPEED_INCREASE = 1 / 12;
+	const DEFAULT_MAX_SPEED = 2.5;
+	const DEFAULT_MIN_SPEED = 0.5;
+
 	const conductor = new Conductor(120);
+
+	const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
 	let started = $state(false);
 	let gameOver = $state(false);
@@ -97,6 +103,12 @@
 			if (lives <= 0) {
 				endGame();
 			} else {
+				if (score % 5 == 0 && score !== 0 && conductor.speed < DEFAULT_MAX_SPEED) {
+					await transition.showSpeed();
+
+					conductor.speed = clamp(conductor.speed + DEFAULT_SPEED_INCREASE, DEFAULT_MIN_SPEED, DEFAULT_MAX_SPEED)
+				}
+
 				currentProject = nextProject;
 
 				player.loadProject().then(() => {
@@ -127,6 +139,9 @@
 	};
 
 	const endGame = () => {
+		conductor.speed = 1.0;
+		conductor.inMinigame = false;
+
 		conductor.reset();
 		player.quitProject();
 
@@ -134,7 +149,10 @@
 	}
 
 	const resetGame = () => {
+		conductor.speed = 1.0;
+		conductor.inMinigame = false;
 		conductor.stop();
+
 		gameOver = false;
 		started = false;
 
