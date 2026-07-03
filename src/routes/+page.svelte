@@ -17,6 +17,8 @@
 	let animationFrameId;
 	let lastTime;
 
+	let score = $state(0);
+
 	const fetchProject = async (path) => {
 		const res = await fetch(path);
 		return res.arrayBuffer();
@@ -74,13 +76,14 @@
 	const endRound = (isStart = false) => {
 		cancelAnimationFrame(animationFrameId);
 		const result = player.getGameState();
-		const score = 999;
+
+		score++;
 
 		const runTransition = async () => {
 			player.pause();
 			
 			if (!isStart) {
-				await transition.showResult(result, score);
+				await transition.showResult(result);
 			} else {
 				await transition.showStart();
 			}
@@ -91,7 +94,7 @@
 				transition.setInstruction(player.getInstruction());
 			});
 
-			await transition.showNext();
+			await transition.showNext(score);
 
 			player.start();
 

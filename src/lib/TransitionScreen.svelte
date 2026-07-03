@@ -56,6 +56,8 @@
 		phase = nextPhase;
 		score = nextScore;
 
+		console.log(phase);
+
 		if (soundName) playSound(soundName);
 
 		if (nextPhase === "next") {
@@ -85,26 +87,8 @@
 	}
 
 	export const showStart = () => runPhase("start", "start", START_HOLD_BEATS);
-	export const showNext = async (readyPromise) => {
-		phase = "next";
-		playSound("normal");
-
-		await holdBeats(NEXT_HOLD_BEATS - INSTRUCTION_HOLD_BEATS / 2);
-
-		if (readyPromise) {
-			await readyPromise;
-		}
-
-		showInstructionText();
-
-		await holdBeats(INSTRUCTION_HOLD_BEATS / 2);
-
-		phase = null;
-		score = null;
-	};
-
-	export const showResult = (result, resultScore = null) =>
-		runPhase(result, result === "win" ? "win" : "lose", RESULT_HOLD_BEATS, resultScore);
+	export const showNext = (score = 0) => runPhase("next", "normal", NEXT_HOLD_BEATS, score)
+	export const showResult = (result) => runPhase(result, result === "win" ? "win" : "lose", RESULT_HOLD_BEATS);
 
 	onMount(() => {
 		for (const [name, src] of Object.entries(AUDIO_SRC)) {
@@ -129,7 +113,7 @@
 			</span>
 			{#if score !== null}
 				<span class="score-text">
-					{score}
+					scoar: {score}
 				</span>
 			{/if}
 		</div>
