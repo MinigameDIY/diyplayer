@@ -7,7 +7,7 @@
     - [NodeJS](https://nodejs.org/dist/v24.18.0/node-v24.18.0-x64.msi)
     - [git](https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.2/Git-2.55.0.2-64-bit.exe)
 
-2. Extract the source code of DIYPlayer and run `npm ci`
+2. Extract the source code of DIYPlayer and run `npm ci` inside of it
     - If you get an error saying "Scripts are disabled on this system", run the following command in a powershell window: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
 3. Run either `set BUILD_SCAFFOLDING=true&& set INSTALL_SCAFFOLDING_DEPS=true&& npm run dev` if you are using CMD, or `$env:BUILD_SCAFFOLDING="true"; $env:INSTALL_SCAFFOLDING_DEPS="true"; npm run dev` if you are using Powershell.
