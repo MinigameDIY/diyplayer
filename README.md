@@ -27,6 +27,6 @@ The setup is effectively the same, just use `BUILD_SCAFFOLDING=true INSTALL_SCAF
 
 # How to add new Minigames
 
-1. Place your project file inside `static/projects/`
+1. Upload your file to a file sharing service (eg; filegarden)
 
-2. Add your project name to the list inside `lib/projects.ts`
+2. Add a link to your project to the list inside `routes/+page.svelte`
