@@ -136,15 +136,22 @@
 			}
 		}
 
+		// TODO: actually automate
+		const extensionModules = import.meta.glob('./assets/extensions/*.js', { query: '?url', eager: true });
+
 		scaffolding.vm.extensionManager.securityManager.rewriteExtensionURL = (extensionURL) => {
 			let url = extensionURL;
+			
 			switch (extensionURL) {
-				case "https://extensions.turbowarp.org/SharkPool/Camera.js":
-					url = "extensions/Camera.js"
+				case "https://extensions.turbowarp.org/SharkPool/Camera.js": {
+					const assetKey = './assets/extensions/Camera.js';
+					url = extensionModules[assetKey]?.default || url;
+					break;
+				}
 			}
 
 			return Promise.resolve(url);
-    	}
+		};
 
 		installPauseAddon(scaffolding);
 	}

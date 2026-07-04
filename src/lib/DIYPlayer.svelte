@@ -5,6 +5,7 @@
     import TransitionScreen from "./TransitionScreen.svelte";
     import EndScreen from "./EndScreen.svelte";
     import { Conductor } from "./Conductor.svelte";
+    import scaffoldingScriptUrl from "./assets/scaffolding/scaffolding-min.js?url";
     
     let { projectUrls = [] } = $props();
 
@@ -39,6 +40,28 @@
 
     let score = $state(0);
     let lives = $state(DEFAULT_LIVES);
+
+
+    let scriptLoaded = $state(false);
+
+    onMount(() => {
+        if (window.Scaffolding) {
+            scriptLoaded = true;
+            return;
+        }
+        
+        const script = document.createElement("script");
+        script.src = scaffoldingScriptUrl;
+        script.type = "module";
+        script.async = true;
+        
+        script.onload = () => {
+            console.log("Scaffolding loaded");
+            scriptLoaded = true;
+        };
+
+        document.head.appendChild(script);
+    });
 
     const fetchProject = async (path) => {
         const res = await fetch(path);
@@ -168,22 +191,24 @@
     });
 </script>
 
-{#if !started}
-    <button onclick={() => started = true}>start oit</button>
-{:else}
-    {#if !gameOver}
-        <div class="hud">
-            <span>{conductor?.time_left?.toFixed(1) ?? '0.0'}s</span>
+{#if scriptLoaded}
+    {#if !started}
+        <button onclick={() => started = true}>start oit</button>
+    {:else}
+        {#if !gameOver}
+            <div class="hud">
+                <span>{conductor?.time_left?.toFixed(1) ?? '0.0'}s</span>
+            </div>
+        {/if}
+        <div class="stage-wrapper">
+            {#if gameOver}
+                <EndScreen bind:this={endScreen} score={score} onButtonPressed={resetGame}></EndScreen>
+            {:else}
+                <ScaffoldingPlayer bind:this={player} onReady={playerOnReady} onMinigameEnd={minigameEnded} />
+                <TransitionScreen bind:this={transition} conductor={conductor} score={score} lives={lives} />
+            {/if}
         </div>
     {/if}
-    <div class="stage-wrapper">
-        {#if gameOver}
-            <EndScreen bind:this={endScreen} score={score} onButtonPressed={resetGame}></EndScreen>
-        {:else}
-            <ScaffoldingPlayer bind:this={player} onReady={playerOnReady} onMinigameEnd={minigameEnded} />
-            <TransitionScreen bind:this={transition} conductor={conductor} score={score} lives={lives} />
-        {/if}
-    </div>
 {/if}
 
 <style>

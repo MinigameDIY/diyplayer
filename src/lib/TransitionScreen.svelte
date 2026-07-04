@@ -4,6 +4,12 @@
 	import { onMount, onDestroy } from "svelte";
 	import { fly } from 'svelte/transition';
 
+	import audioStart from "./assets/transition/transition_start.ogg?url";
+	import audioNormal from "./assets/transition/transition.ogg?url";
+	import audioWin from "./assets/transition/transition_win.ogg?url";
+	import audioLose from "./assets/transition/transition_lose.ogg?url";
+	import audioSpeed from "./assets/transition/transition_speed.ogg?url";
+
 	let phase = $state(null);
 
 	let instruction = $state("googoo");
@@ -19,11 +25,11 @@
 
 	const AUDIO_BASE = "/transition";
 	const AUDIO_SRC = {
-		start: `${AUDIO_BASE}/transition_start.ogg`,
-		normal: `${AUDIO_BASE}/transition.ogg`,
-		win: `${AUDIO_BASE}/transition_win.ogg`,
-		lose: `${AUDIO_BASE}/transition_lose.ogg`,
-		speed: `${AUDIO_BASE}/transition_speed.ogg`,
+		start: audioStart,
+		normal: audioNormal,
+		win: audioWin,
+		lose: audioLose,
+		speed: audioSpeed,
 	};
 
 	const START_HOLD_BEATS = 4;

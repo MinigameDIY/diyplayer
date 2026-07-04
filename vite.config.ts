@@ -37,7 +37,7 @@ function copyScaffoldingPlugin() {
 			}
 
 			const src = path.join(scaffoldingDir, 'dist/scaffolding-min.js');
-			const destDir = path.resolve(__dirname, 'static/scaffolding');
+			const destDir = path.resolve(__dirname, 'src/lib/assets/scaffolding/scaffolding');
 			mkdirSync(destDir, { recursive: true });
 			copyFileSync(src, path.join(destDir, 'scaffolding-min.js'));
 			console.log('[copy-scaffolding] copied latest scaffolding-min.js to static/scaffolding/');
