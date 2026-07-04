@@ -191,6 +191,7 @@
     });
 </script>
 
+
 {#if scriptLoaded}
     {#if !started}
         <button onclick={() => started = true}>start oit</button>
@@ -211,10 +212,15 @@
     {/if}
 {/if}
 
+
 <style>
     .stage-wrapper {
         position: relative;
-        width: 480px;
-        height: 360px;
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        max-width: calc(100% * 4 / 3);
+        margin: 0 auto;
     }
 </style>

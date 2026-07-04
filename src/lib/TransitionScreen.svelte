@@ -113,9 +113,11 @@
 			<span class="result-text">
 				{LABELS[phase] ?? ""}
 			</span>
-			{#each [...Array(lives)] as _, index}
-				❤️
-			{/each}
+			<span class="hearts-text">
+				{#each [...Array(lives)] as _, index}
+					❤️
+				{/each}
+			</span>
 			{#if phase === "next"}
 				<span class="score-text">
 					scoar: {score}
@@ -139,7 +141,8 @@
 		position: absolute;
 		inset: 0;
 		z-index: 10;
-
+		width: 100%;
+		height: 100%;
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
@@ -151,6 +154,7 @@
 	.transition-overlay {
 		grid-column: 1;
 		grid-row: 1;
+
 		width: 100%;
 		height: 100%;
 		
@@ -168,10 +172,10 @@
 		z-index: 20;
 		
 		font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-		font-size: 3rem;
+		font-size: 5cqw;
 		font-weight: 900;
 		color: white;
-		-webkit-text-stroke: 2px black;
+		-webkit-text-stroke: 0.2cqw black;
 		text-align: center;
 		pointer-events: none;
 	}
@@ -197,7 +201,7 @@
 	}
 
 	.result-text {
-		font-size: 5rem;
+		font-size: 3cqw;
 		font-weight: 900;
 		letter-spacing: 0.1em;
 		color: white;
@@ -205,13 +209,8 @@
 		text-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 	}
 
-	.next .result-text,
-	.start .result-text {
-		font-size: 3rem;
-	}
-
-	.score-text {
-		font-size: 2rem;
+	.score-text, .hearts-text {
+		font-size: 2cqw;
 		font-weight: 700;
 		color: white;
 		opacity: 0.9;

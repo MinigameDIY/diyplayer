@@ -22,6 +22,9 @@
 		inset: 0;
 		z-index: 10;
 
+		width: 100%;
+		height: 100%;
+		
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
@@ -33,6 +36,7 @@
 	.endscreen-overlay {
 		grid-column: 1;
 		grid-row: 1;
+
 		width: 100%;
 		height: 100%;
 		
@@ -48,10 +52,11 @@
 
     button {
         pointer-events: all;
+		font-size: 1cqw;
     }
 
 	.end-text {
-		font-size: 2rem;
+		font-size: 2cqw;
 		font-weight: 900;
 		letter-spacing: 0.1em;
 		color: white;
@@ -60,7 +65,7 @@
 	}
 
 	.score-text {
-		font-size: 2rem;
+		font-size: 2cqw;
 		font-weight: 700;
 		color: white;
 		opacity: 0.9;

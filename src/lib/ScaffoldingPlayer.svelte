@@ -224,14 +224,7 @@
 
 <style>
 	.slot {
-		width: 480px;
-		height: 360px;
-		overflow: hidden;
-	}
-	.slot :global(.sc-root),
-	.slot :global(.sc-layers),
-	.slot :global(.sc-canvas) {
-		width: 480px !important;
-		height: 360px !important;
+		width: 100%;
+		height: 100%;
 	}
 </style>

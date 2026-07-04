@@ -16,5 +16,16 @@
 <main>
     <h1>DIYPlayer</h1>
     
-    <DIYPlayer projectUrls={projectLinks} />
+	<div class="container">
+    	<DIYPlayer projectUrls={projectLinks} />
+	</div>
 </main>
+
+<style>
+	.container {
+		background-color: aqua;
+
+		width: 50vw;
+		height: 50vw;
+	}
+</style>
