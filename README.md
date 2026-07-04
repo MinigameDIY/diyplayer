@@ -10,7 +10,7 @@
 2. Extract the source code of DIYPlayer and run `npm ci`
     - If you get an error saying "Scripts are disabled on this system", run the following command in a powershell window: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
-3. Run either `set BUILD_SCAFFOLDING=true  && set INSTALL_SCAFFOLDING_DEPS=true && npm run dev` if you are using CMD, or `$env:BUILD_SCAFFOLDING="true"; $env:INSTALL_SCAFFOLDING_DEPS="true"; npm run dev` if you are using Powershell.
+3. Run either `set BUILD_SCAFFOLDING=true&& set INSTALL_SCAFFOLDING_DEPS=true&& npm run dev` if you are using CMD, or `$env:BUILD_SCAFFOLDING="true"; $env:INSTALL_SCAFFOLDING_DEPS="true"; npm run dev` if you are using Powershell.
 
 4. Navigate to http://localhost:5173/ in your browser.
 
