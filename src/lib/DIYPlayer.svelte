@@ -56,7 +56,6 @@
         script.async = true;
         
         script.onload = () => {
-            console.log("Scaffolding loaded");
             scriptLoaded = true;
         };
 
